@@ -1,0 +1,16 @@
+# Core data manipulation
+pandas
+numpy
+
+# Lightweight search / retrieval
+minsearch
+
+# LLM access (Gemini)
+google-generativeai
+
+# Environment management
+python-dotenv
+
+# For notebook work
+jupyter
+ipykernel
