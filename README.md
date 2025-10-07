@@ -38,28 +38,170 @@ Instead of manually filtering large CSV files, users can ask direct questions su
 The system retrieves relevant entries from the knowledge base, constructs context-rich prompts, and uses an LLM to generate precise and verifiable answers.  
 
 ### 🔍 Main Use Cases
-- **Energy research:** Quickly obtain statistics and insights without complex queries.  
-- **Policy analysis:** Retrieve information to support energy planning and sustainability goals.  
-- **Education:** Help students and professionals learn about global power generation infrastructure.  
-- **LLM evaluation:** Benchmark how well different LLMs handle quantitative reasoning over structured energy data.
+- Energy research: Quickly obtain statistics and insights without complex queries.  
+- Policy analysis: Retrieve information to support energy planning and sustainability goals.  
+- Education: Help students and professionals learn about global power generation infrastructure.  
+- LLM evaluation: Benchmark how well different LLMs handle quantitative reasoning over structured energy data.
 
+## Technologies
 
-# Running It
+* Minsearch for text search 
+```bash
+pip install minsearch
+```
+* LLM - Gemini 
+* API interface - Flask (see [Technical Details](#technical-details) for more details)
 
-Envirronmental variables were stored in a .env file
+## Getting Started
 
+## Environment Setup and Installation
 
-Set up virtual env to run code in (and install dependencies)
+* 1. Create a .env file in the project root with your environment variables
+* 2. Set up virtual env to run the code and Install the required dependencies 
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Running Jupyter Notebook for experiments after ensuring Jupyper notebook is installed:
+### Running the Application
+
+Running the Flask application:
+
+```bash
+python app.py
+```
+
+The application will be available at http://127.0.0.1:5000
+
+API Usage
+
+Query Endpoint
+
+Send a question about power plants:
+
+```bash
+
+
+URL=http://127.0.0.1:5000
+
+QUESTION="What do you know about Drax power plant?"
+
+DATA='{
+    "question": "'${QUESTION}'"
+}'
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d "${DATA}" \
+  ${URL}/question 
+
+```
+
+Example Response:
+
+```json
+{
+  "answer": "There are two power plants named Drax mentioned in the context:\n\n1.  **Drax power plant**: Located in the United Kingdom, it is a Coal facility with a capacity of 1980 MW. It is located at latitude 54 and longitude -1.\n2.  **Drax GT power plant**: Also located in the United Kingdom, it is a Gas facility with a capacity of 75 MW. It is located at latitude 54 and longitude -1.",
+  "conversation_id": "8bf6121b-7050-4b70-8dcf-100a943cfd58",
+  "question": "What do you know about Drax power plant?"
+}
+```
+
+Feedback Endpoint
+Submit feedback for a conversation:
+
+```bash
+CONVERSATION_ID="8bf6121b-7050-4b70-8dcf-100a943cfd58"
+
+FEEDBACK_DATA='{
+    "conversation_id": "'${CONVERSATION_ID}'", 
+    "feedback": 1
+}'
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d "${FEEDBACK_DATA}" \
+  ${URL}/feedback 
+
+```
+Example Response:
+
+```json
+{
+  "message": "Feedback received for conversation 8bf6121b-7050-4b70-8dcf-100a943cfd58 with feedback 1"
+}
+```
+
+## Development 
+Running Jupyter Notebook for experimentation:
 
 ```bash
 cd notebooks    
 jupyter notebook
 ```
 
+
+## Interface
+
+Flask was used for serving the application as an API.
+
+
+## Evaluation
+
+### Retrieval
+
+Using minsearch without boosting give the following result;
+
+* hit_rate: 98%
+* mrr: 94%
+
+The improved version(with better boosting):
+
+* hit rate: 98%
+* mrr: 96%
+
+The best boosting parameters:
+
+```python
+boost = {
+    'country_long': 0.28,
+    'name':  0.90,
+    'primary_fuel': 1.56,
+    'capacity_mw': 0.72,
+    'commissioning_year': 1.97,
+    'passage': 1.28     
+}
+```
+
+### Rag Flow
+
+Planned Approach: LLM-as-a-Judge metric to evaluate responses as:
+
+* X RELEVANT
+* Y PARTIALLY RELEVANT
+* Z IRRELEVANT  
+
+Status: Due to resource constraints, automated RAG evaluation and model response benchmarking could not be completed at this time.
+
+
+### Monitoring
+
+
+### Ingestion
+
+The ingestion script is implemented in  [gppd-assisstant/ingest.py](gppd-assisstant/ingest.py) and runs automatically when  [gppd-assisstant/rag.py](gppd-assisstant/rag.py) is executed.
+
+## technical-details
+
+### 🌐 Application Interface — Flask
+
+The RAG application interface was built using **Flask**, a lightweight and flexible Python web framework. Flask handles the API layer of the project, allowing users to send queries to the retrieval-augmented generation (RAG) pipeline and receive model responses in real time.
+
+It provides a simple route structure for interacting with the system and feedback collection.
+
+For more details on Flask and its usage, visit the official documentation:  
+👉 [https://flask.palletsprojects.com](https://flask.palletsprojects.com)
+
+
+Note: Ensure you have a valid Google Gemini API key configured in your .env file before running the application.
