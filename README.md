@@ -7,6 +7,17 @@ Accessing structured energy data is tedious and time-consuming. Analysts and res
 This project builds a Retrieval-Augmented Generation APP that answers quantitative energy questions using the Global Power Plant Database (GPPD). The system ingests GPPD into a knowledge base (vector + text), retrieves relevant passages, builds prompts, queries an LLM, and evaluates performance on a ground-truth QA set generated from GPPD. This is the final project for the DTC's LLM Zoomcamp
 
 
+## 🚀 Project Overview
+
+**Energy-Analytics-RAG** is a lightweight Retrieval-Augmented Generation (RAG) application that enables users to explore and query power plant data from the **Global Power Plant Database (GPPD)** using natural language.  
+Instead of manually filtering large CSV files, users can ask direct questions such as:  
+
+- *“What is the largest solar plant in the United Kingdom?”*  
+- *“When was the first hydro power plant in the U.S. commissioned?”*  
+- *“List major gas plants commissioned after 2010.”*  
+
+The system retrieves relevant entries from the knowledge base, constructs context-rich prompts, and uses an LLM to generate precise and verifiable answers.
+
 ## 📊 Dataset
 
 This project uses the **Global Power Plant Database (GPPD)** — a comprehensive, open-source dataset compiled by the **World Resources Institute (WRI)**.  
@@ -26,17 +37,6 @@ For this project, a **subset of the dataset covering the United States and the U
 Additional columns such as **other_fuel1**, **generation_gwh_2021**, and **source** provide deeper context but were excluded in the lightweight subset to optimize retrieval performance.
 
 
-## 🚀 Project Overview
-
-**Energy-Analytics-RAG** is a lightweight Retrieval-Augmented Generation (RAG) application that enables users to explore and query power plant data from the **Global Power Plant Database (GPPD)** using natural language.  
-Instead of manually filtering large CSV files, users can ask direct questions such as:  
-
-- *“What is the largest solar plant in the United Kingdom?”*  
-- *“When was the first hydro power plant in the U.S. commissioned?”*  
-- *“List major gas plants commissioned after 2010.”*  
-
-The system retrieves relevant entries from the knowledge base, constructs context-rich prompts, and uses an LLM to generate precise and verifiable answers.  
-
 ### 🔍 Main Use Cases
 - Energy research: Quickly obtain statistics and insights without complex queries.  
 - Policy analysis: Retrieve information to support energy planning and sustainability goals.  
@@ -54,7 +54,44 @@ pip install minsearch
 
 ## Getting Started
 
-## Environment Setup and Installation
+## Running it with Docker
+
+Easiest way to run the application is to do so with docker
+
+```bash
+docker-compose up
+```
+
+If you need ro change something in the dockerfile and test it quickl, you can use the following commands:
+
+```bash
+docker build --no-cache -t energy-analytics-rag .
+
+docker run -it --rm \
+    -e GEMINI_API_KEY=${GEMINI_API_KEY} \
+    -e DATA_PATH="data/data.csv" \
+    -p 5000:5000 \
+    energy-analytics-rag
+```
+
+### Preparing the Application
+
+Before we can use the app, we need to initialize the database.
+
+That can be done by running the [`db_prep.py`](gppd_assisstant/db_prep.py) script:
+```bash
+
+cd gppd_assisstant
+export POSTGRES_HOST=localhost
+python db_prep.py
+```
+
+The application will be available at http://127.0.0.1:5000
+
+## Running Locally
+### Environment Setup and Installation
+
+If not using docker, installations should be done manually following below steps:
 
 * 1. Create a .env file in the project root with your environment variables
 * 2. Set up virtual env to run the code and Install the required dependencies 
@@ -64,17 +101,20 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+
 ### Running the Application
 
-Running the Flask application:
+Running the Flask application locally, do this:
 
 ```bash
+source venv/bin/activate
+export POSTGRES_HOST=localhost
 python app.py
 ```
 
-The application will be available at http://127.0.0.1:5000
+## Application Usage
 
-API Usage
+Start the application eaither with docker compose or locally. You can then test it: 
 
 Query Endpoint
 

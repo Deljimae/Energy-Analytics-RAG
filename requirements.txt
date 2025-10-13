@@ -1,9 +1,7 @@
-pandas
-minsearch
-google-generativeai
-python-dotenv
-jupyter
-ipykernel
-hyperopt
-flask
-
+pandas==2.2.2
+minsearch==0.0.7
+google-genai==1.43.0
+python-dotenv==1.1.0
+flask==3.1.2
+psycopg2-binary==2.9.9
+gunicorn==23.0.0

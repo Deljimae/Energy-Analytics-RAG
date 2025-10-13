@@ -1,4 +1,4 @@
-import ingest
+from ingest import load_index
 import os
 from google import genai
 from dotenv import load_dotenv
@@ -9,11 +9,19 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
-index = ingest.load_index()
+# Don't load index at module level - do it lazily
+index = None
+
+def get_index():
+    global index
+    if index is None:
+        index = load_index()
+    return index
 
 
 def search(query):    
-    results = index.search(
+    idx = get_index()  # Load index when needed
+    results = idx.search(
         query=query,
         filter_dict={},
         num_results=10
