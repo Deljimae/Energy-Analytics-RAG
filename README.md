@@ -74,6 +74,21 @@ docker run -it --rm \
     energy-analytics-rag
 ```
 
+
+## Running Locally
+
+### Environment Setup and Installation
+
+If not using docker, installations should be done manually following below steps:
+
+* 1. Create a .env file in the project root with your environment variables
+* 2. Set up virtual env to run the code and Install the required dependencies 
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ### Preparing the Application
 
 Before we can use the app, we need to initialize the database.
@@ -88,20 +103,6 @@ python db_prep.py
 
 The application will be available at http://127.0.0.1:5000
 
-## Running Locally
-### Environment Setup and Installation
-
-If not using docker, installations should be done manually following below steps:
-
-* 1. Create a .env file in the project root with your environment variables
-* 2. Set up virtual env to run the code and Install the required dependencies 
-
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-
 ### Running the Application
 
 Running the Flask application locally, do this:
@@ -112,7 +113,7 @@ export POSTGRES_HOST=localhost
 python app.py
 ```
 
-## Application Usage
+## Application Usage / testing
 
 Start the application eaither with docker compose or locally. You can then test it: 
 
@@ -223,9 +224,6 @@ Planned Approach: LLM-as-a-Judge metric to evaluate responses as:
 * Z IRRELEVANT  
 
 Status: Due to resource constraints, automated RAG evaluation and model response benchmarking could not be completed at this time.
-
-
-### Monitoring
 
 
 ### Ingestion
